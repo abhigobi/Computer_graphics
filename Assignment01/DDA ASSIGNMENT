@@ -1,0 +1,153 @@
+# include <stdio.h>
+# include <GL/glut.h>
+
+int xa,ya,xb,yb;
+
+int Round(float a)
+{
+      return (int) a;
+}
+
+void DDA(int xa , int ya , int xb , int yb)
+{
+    int dx,dy;
+    float steps;
+   
+    dx = xb - xa;
+    dy = yb - ya;
+   
+    if(abs(dx) > abs(dy))
+    {
+      steps = abs(dx);
+    }
+    else
+    {
+      steps = abs(dy);
+    }
+    float xin , yin;
+    xin = dx/steps;
+    yin = dy/steps;
+   
+    int x,y;
+    x = xa;
+    y = ya;
+    glVertex2d(Round(x) , Round(y));
+    for(int i=0;i<steps;i++)
+    {
+        x = x + xin;
+        y = y + yin;
+        glVertex2d(Round(x),Round(y));
+    }
+   
+}
+
+void DDAD(int xa , int ya , int xb , int yb)
+{
+    int dx,dy;
+    float steps;
+   
+    dx = xb - xa;
+    dy = yb - ya;
+   
+    if(abs(dx) > abs(dy))
+    {
+      steps = abs(dx);
+    }
+    else
+    {
+      steps = abs(dy);
+    }
+    float xin , yin;
+    xin = dx/steps;
+    yin = dy/steps;
+   
+    int x,y;
+    x = xa;
+    y = ya;
+    glVertex2d(Round(x) , Round(y));
+    for(int i=0;i<steps;i++)
+    {
+        x = x + xin;
+        y = y + yin;
+       
+        if(i%4!=0)
+        {
+          glVertex2d(Round(x),Round(y));
+        }
+    }
+}
+
+void DDADA(int xa , int ya , int xb , int yb)
+{
+    int dx,dy;
+    float steps;
+   
+    dx = xb - xa;
+    dy = yb - ya;
+   
+    if(abs(dx) > abs(dy))
+    {
+      steps = abs(dx);
+    }
+    else
+    {
+      steps = abs(dy);
+    }
+    float xin , yin;
+    xin = dx/steps;
+    yin = dy/steps;
+   
+    int x,y;
+    x = xa;
+    y = ya;
+    glVertex2d(Round(x) , Round(y));
+    for(int i=0;i<steps;i++)
+    {
+        x = x + xin;
+        y = y + yin;
+       
+        if(i%4==0)
+        {
+          glVertex2d(Round(x),Round(y));
+        }
+    }
+}
+
+void draw()
+{
+  glClear(GL_COLOR_BUFFER_BIT);
+  glBegin(GL_POINTS);
+  glPointSize(7);
+  DDA(250,0,250,500);
+  DDA(0,250,500,250);
+  //DDA(xa,ya,xb,yb);
+  //DDAD(xa,ya,xb,yb);
+  DDAD(xa,ya,xb,yb);
+  glEnd();
+  glFlush();
+}
+void init(void)
+{
+  glClearColor(0.0,0.0,0.0,0.0);
+  glMatrixMode(GL_PROJECTION);
+  glLoadIdentity();
+  gluOrtho2D(0.0,500.0,0.0,500.0);
+}
+
+int main(int argc , char** argv)
+{
+
+    printf("Enter the initial points");
+    scanf("%d %d",&xa,&ya);
+    printf("Enter the final points");
+    scanf("%d %d" ,&xb,&yb);
+    glutInit(&argc , argv);
+    glutInitDisplayMode(GLUT_SINGLE | GLUT_RGB);
+    glutInitWindowPosition(0,0);
+    glutInitWindowSize(500,500);
+    glutCreateWindow("DDAD");
+   
+    init();
+    glutDisplayFunc(draw);
+    glutMainLoop();
+}
