@@ -1,0 +1,88 @@
+#include<stdio.h>
+#include<GL/glut.h>
+
+
+float intcol[3]={0.0,0.0,0.0};
+float fillcol[3]={1.0,0.0,0.0};
+float bound[3]={1.0,0.0,0.0};
+
+void setpixel(int pointx , int pointy , float f[3])
+{
+    glBegin(GL_POINTS);
+    glColor3fv(f);
+    glVertex2i(pointx,pointy);
+    glEnd();
+    glFlush();
+}
+
+void getpixel(int x ,int y,float pixels[3])
+{
+    glReadPixels(x,y,1.0,1.0,GL_RGB,GL_FLOAT, pixels);
+}
+
+void polygon(int x1 , int y1 ,int x2,int y2)
+{
+    glColor3f(1.0,1.0,0.0);
+    glBegin(GL_LINE_LOOP);
+    glVertex2i(x1,y1);
+    glVertex2i(x1,y2);
+    glVertex2i(x2,y2);
+    glVertex2i(x2,y1);
+    glEnd();
+}
+
+void floodfill(int x , int y , float oldcolor[3] , float newcolor[3])
+{
+    float color[3];
+    getpixel(x,y,color);
+   
+    if(color[0]==oldcolor[0] && color[1]==oldcolor[1] && color[2]==oldcolor[2])
+    {
+        setpixel(x,y,newcolor);
+        floodfill(x+1,y,oldcolor,newcolor);
+        floodfill(x-1,y,oldcolor,newcolor);
+        floodfill(x,y+1,oldcolor,newcolor);
+        floodfill(x,y-1,oldcolor,newcolor);
+    }
+}
+
+
+
+void mouse(int button , int state,int x , int y)
+{
+    if(button==GLUT_LEFT_BUTTON && state==GLUT_DOWN)
+    {
+        int xi = x;
+        int yi = 500-y;
+       floodfill(xi,yi,intcol,fillcol);
+    }
+}
+
+void draw()
+{
+    glClear(GL_COLOR_BUFFER_BIT);
+    polygon(100,100,400,400);
+    glFlush();
+}
+
+void init()
+{
+    glClearColor(0.0,0.0,0.0,0.0);
+    glMatrixMode(GL_PROJECTION);
+    glLoadIdentity();
+    gluOrtho2D(0,500,0,500);
+}
+
+void main(int argc , char** argv)
+{
+    glutInit(&argc,argv);
+    glutInitDisplayMode(GLUT_SINGLE | GLUT_RGB);
+    glutInitWindowPosition(0,0);
+    glutInitWindowSize(500,500);
+    glutCreateWindow("Flood fill");
+   
+    init();
+    glutDisplayFunc(draw);
+    glutMouseFunc(mouse);
+    glutMainLoop();
+}
